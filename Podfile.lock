@@ -7,7 +7,7 @@ DEPENDENCIES:
   - Macaw
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Macaw
     - SWXMLHash
 
@@ -17,4 +17,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 80e3058f62f77a5ccc88e06410d9d25e9755c801
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.5.0

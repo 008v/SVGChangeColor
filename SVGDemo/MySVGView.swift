@@ -21,7 +21,8 @@ open class MySVGView: MacawView {
     fileprivate var svgNode: Node?
     var pinchGesture: UIPinchGestureRecognizer!
     var panGesture: UIPanGestureRecognizer!
-    var scale: Double = 1.0
+    var originalTrans: Transform!
+    var trans: Transform!
     
 //    @IBInspectable open var fileName: String? {
 //        didSet {
@@ -42,6 +43,7 @@ open class MySVGView: MacawView {
             svgNode = node
         }
         render()
+        originalTrans = node.place
     }
     
     public init(node: Node = Group(), frame: CGRect) {
@@ -245,17 +247,29 @@ extension MySVGView {
 
 extension MySVGView {
     @objc func handlePinch(gesture: UIPinchGestureRecognizer) {
-        scale = Double(gesture.scale)
-        let location = gesture.location(in: self)
-        let anchor = Point(x: Double(location.x), y: Double(location.y))
-        print("pinch(scale = \(scale), anchor = \(location.x, location.y))")
-        node.place = Transform.move(dx: anchor.x * (1.0 - scale), dy: anchor.y * (1.0 - scale)).scale(sx: scale, sy: scale)
+        if gesture.state == UIGestureRecognizerState.changed {
+            let location = gesture.location(in: self)
+            let anchor = Point(x: Double(location.x), y: Double(location.y))
+            let pinchScale = Double(gesture.scale)
+            if let t = trans {
+                node.place = t.move(dx: anchor.x * (1.0 - pinchScale), dy: anchor.y * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
+            }else {
+                node.place = Transform.move(dx: anchor.x * (1.0 - pinchScale), dy: anchor.y * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
+            }
+        }else if gesture.state == UIGestureRecognizerState.ended {
+            trans = node.place
+        }
     }
     
     @objc func handlePan(gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: gesture.view)
+        var scale: Double = 1.0
+        if let t = trans, let ot = originalTrans {
+            scale = t.m11 / ot.m11
+        }
         node.place = node.place.move(dx: Double(translation.x / CGFloat(scale)), dy: Double(translation.y / CGFloat(scale)))
         gesture.setTranslation(CGPoint.zero, in: gesture.view)
+        trans = node.place
     }
 }
 
