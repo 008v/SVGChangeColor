@@ -19,6 +19,9 @@ open class MySVGView: MacawView {
     
     fileprivate let rootNode = Group()
     fileprivate var svgNode: Node?
+    var pinchGesture: UIPinchGestureRecognizer!
+    var panGesture: UIPanGestureRecognizer!
+    var scale: Double = 1.0
     
 //    @IBInspectable open var fileName: String? {
 //        didSet {
@@ -29,7 +32,12 @@ open class MySVGView: MacawView {
     
     public init(f: String?, frame: CGRect) {
         super.init(frame: frame)
+        
         if let node = try? SVGParser.parse(path: f ?? "") {
+            pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(handlePinch(gesture:)))
+            panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(handlePan(gesture:)))
+            self.addGestureRecognizer(pinchGesture)
+            self.addGestureRecognizer(panGesture)
             addTap(node: node)
             svgNode = node
         }
@@ -232,6 +240,22 @@ extension MySVGView {
                 shape.fill = arc4random() % 2 == 0 ? Color.yellow : Color.green
             }
         }
+    }
+}
+
+extension MySVGView {
+    @objc func handlePinch(gesture: UIPinchGestureRecognizer) {
+        scale = Double(gesture.scale)
+        let location = gesture.location(in: self)
+        let anchor = Point(x: Double(location.x), y: Double(location.y))
+        print("pinch(scale = \(scale), anchor = \(location.x, location.y))")
+        node.place = Transform.move(dx: anchor.x * (1.0 - scale), dy: anchor.y * (1.0 - scale)).scale(sx: scale, sy: scale)
+    }
+    
+    @objc func handlePan(gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: gesture.view)
+        node.place = node.place.move(dx: Double(translation.x / CGFloat(scale)), dy: Double(translation.y / CGFloat(scale)))
+        gesture.setTranslation(CGPoint.zero, in: gesture.view)
     }
 }
 
