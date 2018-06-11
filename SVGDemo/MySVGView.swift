@@ -36,7 +36,9 @@ open class MySVGView: MacawView {
         
         if let node = try? SVGParser.parse(path: f ?? "") {
             pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(handlePinch(gesture:)))
+            pinchGesture.delegate = self
             panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(handlePan(gesture:)))
+            panGesture.delegate = self
             self.addGestureRecognizer(pinchGesture)
             self.addGestureRecognizer(panGesture)
             addTap(node: node)
@@ -247,14 +249,30 @@ extension MySVGView {
 
 extension MySVGView {
     @objc func handlePinch(gesture: UIPinchGestureRecognizer) {
+        guard gesture.numberOfTouches == 2 else { return }
         if gesture.state == UIGestureRecognizerState.changed {
-            let location = gesture.location(in: self)
-            let anchor = Point(x: Double(location.x), y: Double(location.y))
-            let pinchScale = Double(gesture.scale)
+            let touch0 = gesture.location(ofTouch: 0, in: self)
+            let touch1 = gesture.location(ofTouch: 1, in: self)
+            let anchor = CGPoint.init(x: (touch0.x + touch1.x) / 2 , y: (touch0.y + touch1.y) / 2)
+            // 限制缩放比例: (1.0 ~ 8.0)
+            var pinchScale = Double(gesture.scale)
+            var scale: Double = 1.0
+            if let t = trans, let ot = originalTrans {
+                scale = t.m11 / ot.m11
+            }
+            if pinchScale >= 1.0 {  // 放大
+                if scale >= 8.0 {
+                    pinchScale = 1.0
+                }
+            }else {                 // 缩小
+                if scale <= 1.0 {
+                    pinchScale = 1.0 / scale
+                }
+            }
             if let t = trans {
-                node.place = t.move(dx: anchor.x * (1.0 - pinchScale), dy: anchor.y * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
+                node.place = t.move(dx: Double(anchor.x) * (1.0 - pinchScale), dy: Double(anchor.y) * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
             }else {
-                node.place = Transform.move(dx: anchor.x * (1.0 - pinchScale), dy: anchor.y * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
+                node.place = Transform.move(dx: Double(anchor.x) * (1.0 - pinchScale), dy: Double(anchor.y) * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
             }
         }else if gesture.state == UIGestureRecognizerState.ended {
             trans = node.place
@@ -262,6 +280,7 @@ extension MySVGView {
     }
     
     @objc func handlePan(gesture: UIPanGestureRecognizer) {
+        guard gesture.numberOfTouches == 1 else { return }
         let translation = gesture.translation(in: gesture.view)
         var scale: Double = 1.0
         if let t = trans, let ot = originalTrans {
