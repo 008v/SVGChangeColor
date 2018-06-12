@@ -9,25 +9,29 @@
 import Foundation
 import Macaw
 
-open class MySVGView: MacawView {
+public class MySVGView: MacawView {
     
-    var pinchGesture: UIPinchGestureRecognizer!
-    var panGesture: UIPanGestureRecognizer!
-    var originalTrans: Transform!
-    var trans: Transform!
-    var isPaint = false {
+    public var template: String = ""
+    public var penColor: Fill = Color.white
+    public var penMode: Int = 0 {                       // 0: tap涂色 1: move涂色
         didSet {
-            if isPaint == true {
+            if penMode == 0 {
                 panGesture.minimumNumberOfTouches = 2
-            }else {
+            }else if penMode == 1 {
                 panGesture.maximumNumberOfTouches = 1
             }
         }
     }
     
-    public init(f: String?, frame: CGRect) {
+    var pinchGesture: UIPinchGestureRecognizer!
+    var panGesture: UIPanGestureRecognizer!
+    var originalTrans: Transform!
+    var trans: Transform!
+    
+    public init(template: String, frame: CGRect) {
         super.init(frame: frame)
-        if let node = try? SVGParser.parse(path: f ?? "") {
+        self.template = template
+        if let node = try? SVGParser.parse(path: template) {
             pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(handlePinch(gesture:)))
             panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(handlePan(gesture:)))
             panGesture.maximumNumberOfTouches = 2
@@ -37,7 +41,6 @@ open class MySVGView: MacawView {
             self.node = node
         }
         originalTrans = node.place
-        isPaint = true
     }
     
     public init(node: Node = Group(), frame: CGRect) {
@@ -66,40 +69,96 @@ extension MySVGView {
             shape.onTap { [weak self] (tapEvent) in
                 guard let strongSelf = self else { return }
                 strongSelf.replaceColors(node: shape)
-                print("tap")
+                print("tap(node: \(node.tag))")
+            }
+            shape.onLongTap { [weak self] (longPressEvent) in
+                guard let strongSelf = self else { return }
+                strongSelf.eyedropper(node: shape)
+                print("long press(node: \(node.tag))")
             }
         }
     }
     
-    public func replaceColors(node: Node) {
-        if let group = node as? Group {
-            for child in group.contents {
-                replaceColors(node: child)
-            }
-        }else if let shape = node as? Shape {
-//            if let _ = shape.fill as? Color {
-            shape.fill = MySVGView.randomFill()
+    public func replaceColors(node: Node) -> Bool {
+//        if let group = node as? Group {
+//            for child in group.contents {
+//                replaceColors(node: child)
 //            }
+//            return false
+//        }else
+        if let shape = node as? Shape {
+            shape.fill = penColor
+            return true
         }
+        return false
     }
     
-    public static func randomFill() -> Fill {
+    public func eyedropper(node: Node) -> Bool {
+        if let shape = node as? Shape, let f = shape.fill {
+            penColor = f
+            return true
+        }
+        return false
+    }
+    
+    public func export(size: CGSize = CGSize(width: 850, height: 850)) -> UIImage? {
+            UIGraphicsBeginImageContext(size)
+            defer {
+                UIGraphicsEndImageContext()
+            }
+            layer.render(in: UIGraphicsGetCurrentContext()!)
+            let img =  UIGraphicsGetImageFromCurrentImageContext()
+            return img
+    }
+    
+    public func export(size: CGSize = CGSize(width: 850, height: 850)) -> String? {
+        UIGraphicsBeginImageContext(size)
+        defer {
+            UIGraphicsEndImageContext()
+        }
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        let img =  UIGraphicsGetImageFromCurrentImageContext()
+        if let i = img {
+            if let data = UIImagePNGRepresentation(i) {
+                return data.base64EncodedString()
+            }
+            return nil
+        }
+        return nil
+    }
+    
+    public func export(size: CGSize = CGSize(width: 850, height: 850), to: String) -> String? {
+        UIGraphicsBeginImageContext(size)
+        defer {
+            UIGraphicsEndImageContext()
+        }
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        let img =  UIGraphicsGetImageFromCurrentImageContext()
+        if let i = img {
+            if let data = UIImagePNGRepresentation(i) {
+                return data.base64EncodedString()
+            }
+            return nil
+        }
+        return nil
+    }
+    
+    static func randomFill() -> Fill {
         if arc4random() % 2 == 0 {
             return randomColor()
         }
         return randomLinearGradient()
     }
     
-    public static func randomColor() -> Color {
+    static func randomColor() -> Color {
         let r = Int(arc4random_uniform(UINT32_MAX) % 255)
         let g = Int(arc4random_uniform(UINT32_MAX) % 255)
         let b = Int(arc4random_uniform(UINT32_MAX) % 255)
-//        let a = Double(arc4random_uniform(100)) / 100.0
         let color = Color.rgba(r: r, g: g, b: b, a: 1.0)
         return color
     }
     
-    public static func randomLinearGradient() -> LinearGradient {
+    static func randomLinearGradient() -> LinearGradient {
         var degree: Double = 0
         switch arc4random_uniform(UINT32_MAX) % 4 {
         case 0:
@@ -120,6 +179,7 @@ extension MySVGView {
         let linearGradient = LinearGradient.init(degree: degree, from: randomColor(), to: randomColor())
         return linearGradient
     }
+
 }
 
 extension MySVGView {
@@ -160,7 +220,7 @@ extension MySVGView {
     @objc func handlePan(gesture: UIPanGestureRecognizer) {
 //        print("pan")
         if gesture.state == UIGestureRecognizerState.changed {
-            if gesture.numberOfTouches == 1 && isPaint == true {
+            if gesture.numberOfTouches == 1 && penMode == 1 {
                 let location = gesture.location(in: self)
                 if let currentNode = findNodeAt(location: location) {
                     replaceColors(node: currentNode)
@@ -175,7 +235,7 @@ extension MySVGView {
             node.place = node.place.move(dx: Double(translation.x / CGFloat(scale)), dy: Double(translation.y / CGFloat(scale)))
             gesture.setTranslation(CGPoint.zero, in: gesture.view)
         }else if gesture.state == UIGestureRecognizerState.ended {
-            if gesture.numberOfTouches == 1 && isPaint == true {
+            if gesture.numberOfTouches == 1 && penMode == 1 {
                 return
             }
             trans = node.place

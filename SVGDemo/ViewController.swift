@@ -12,25 +12,17 @@ import Macaw
 
 class ViewController: UIViewController {
     
-    var scrollView: UIScrollView!
     var mySVGView: MySVGView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor.yellow
         
-//        scrollView = UIScrollView.init(frame: view.bounds)
-//        mySVGView = MySVGView.init(f: "zen", frame: CGRect.init(x: 0, y: 0, width: 850, height: 850))
-//        mySVGView.contentMode = .scaleAspectFit
-//        scrollView.addSubview(mySVGView)
-//        scrollView.contentSize = mySVGView.bounds.size
-//        scrollView.maximumZoomScale = 8.0
-//        scrollView.minimumZoomScale = 1.0
-//        scrollView.bouncesZoom = false
-//        scrollView.delegate = self
-//        view.addSubview(scrollView)
+        let svgFrame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.width)
         
-        mySVGView = MySVGView.init(f: "zen", frame: view.bounds)
+        mySVGView = MySVGView.init(template: "basic_1-0-3", frame: svgFrame)
         mySVGView.contentMode = .scaleAspectFit
+
         view.addSubview(mySVGView)
     }
     

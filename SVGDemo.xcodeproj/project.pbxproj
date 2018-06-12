@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2416683E20CF83F700AE39AC /* basic_1-0-3.svg in Resources */ = {isa = PBXBuildFile; fileRef = 2416683D20CF83F600AE39AC /* basic_1-0-3.svg */; };
 		245034FB20C54C08005B3400 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245034FA20C54C08005B3400 /* AppDelegate.swift */; };
 		245034FD20C54C08005B3400 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245034FC20C54C08005B3400 /* ViewController.swift */; };
 		2450350020C54C08005B3400 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 245034FE20C54C08005B3400 /* Main.storyboard */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2416683D20CF83F600AE39AC /* basic_1-0-3.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "basic_1-0-3.svg"; sourceTree = "<group>"; };
 		245034F720C54C08005B3400 /* SVGDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SVGDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		245034FA20C54C08005B3400 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		245034FC20C54C08005B3400 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				24F85A7820C7831800AA8D69 /* zen.svg */,
+				2416683D20CF83F600AE39AC /* basic_1-0-3.svg */,
 				245034FA20C54C08005B3400 /* AppDelegate.swift */,
 				245034FC20C54C08005B3400 /* ViewController.swift */,
 				24F85A7C20C7904D00AA8D69 /* MySVGView.swift */,
@@ -264,6 +267,7 @@
 				2450350520C54C09005B3400 /* LaunchScreen.storyboard in Resources */,
 				2450350220C54C09005B3400 /* Assets.xcassets in Resources */,
 				24F85A7920C7831800AA8D69 /* zen.svg in Resources */,
+				2416683E20CF83F700AE39AC /* basic_1-0-3.svg in Resources */,
 				2450350020C54C08005B3400 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
