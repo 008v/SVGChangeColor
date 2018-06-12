@@ -68,15 +68,6 @@ extension MySVGView {
                 strongSelf.replaceColors(node: shape)
                 print("tap")
             }
-//            shape.onTouchMoved { (touchEvent) in
-//                print("moved")
-//            }
-//            shape.onTouchPressed { (touchEvent) in
-//                print("pressed")
-//            }
-//            shape.onTouchReleased { (touchEvent) in
-//                print("released")
-//            }
         }
     }
     
@@ -86,10 +77,48 @@ extension MySVGView {
                 replaceColors(node: child)
             }
         }else if let shape = node as? Shape {
-            if let _ = shape.fill as? Color {
-                shape.fill = arc4random() % 2 == 0 ? Color.yellow : Color.green
-            }
+//            if let _ = shape.fill as? Color {
+            shape.fill = MySVGView.randomFill()
+//            }
         }
+    }
+    
+    public static func randomFill() -> Fill {
+        if arc4random() % 2 == 0 {
+            return randomColor()
+        }
+        return randomLinearGradient()
+    }
+    
+    public static func randomColor() -> Color {
+        let r = Int(arc4random_uniform(UINT32_MAX) % 255)
+        let g = Int(arc4random_uniform(UINT32_MAX) % 255)
+        let b = Int(arc4random_uniform(UINT32_MAX) % 255)
+//        let a = Double(arc4random_uniform(100)) / 100.0
+        let color = Color.rgba(r: r, g: g, b: b, a: 1.0)
+        return color
+    }
+    
+    public static func randomLinearGradient() -> LinearGradient {
+        var degree: Double = 0
+        switch arc4random_uniform(UINT32_MAX) % 4 {
+        case 0:
+            degree = 0
+            break
+        case 1:
+            degree = 90
+            break
+        case 2:
+            degree = 180
+            break
+        case 3:
+            degree = 270
+            break
+        default:
+            degree = 0
+        }
+        let linearGradient = LinearGradient.init(degree: degree, from: randomColor(), to: randomColor())
+        return linearGradient
     }
 }
 
