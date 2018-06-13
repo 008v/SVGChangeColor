@@ -26,9 +26,8 @@ public class MySVGView: MacawView {
     var pinchGesture: UIPinchGestureRecognizer!
     var panGesture: UIPanGestureRecognizer!
     var originalTrans: Transform!           // svg原始大小的transform
-    var scaleAspectFitTrans: Transform!     // scaleAspectFit的transform
     var trans: Transform!                   // 当前的transform
-    var scaleFit: Double! {
+    var scaleFit: Double! {                 // scaleAspectFit后的大小，相对于SVG原始大小的比例
         get {
             return Double(self.bounds.width / 850)
         }
@@ -36,17 +35,28 @@ public class MySVGView: MacawView {
     
     public init(template: String, frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = UIColor.yellow
         self.template = template
         if let node = try? SVGParser.parse(path: template) {
-            // gesture
+            // add gesture
             pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(handlePinch(gesture:)))
             panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(handlePan(gesture:)))
             panGesture.maximumNumberOfTouches = 2
             self.addGestureRecognizer(pinchGesture)
             self.addGestureRecognizer(panGesture)
             addTap(node: node)
+            // add black background
+            if let group = node as? Group {
+                let rect = Rect.init(x: 1, y: 1, w: 850-2, h: 850-2)
+                let backgroundShape = Shape(form: rect, fill: Color.black)
+                var contents = group.contents
+                contents.insert(backgroundShape, at: 0)
+                group.contents = contents
+                self.node = group
+            }else {
+                self.node = node
+            }
             // layout
-            self.node = node
             self.contentMode = .scaleAspectFit
         }
         originalTrans = Transform.init(m11: node.place.m11, m12: node.place.m12, m21: node.place.m21, m22: node.place.m22, dx: node.place.dx, dy: node.place.dy)
