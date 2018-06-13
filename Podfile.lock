@@ -4,7 +4,7 @@ PODS:
   - SWXMLHash (4.7.0)
 
 DEPENDENCIES:
-  - Macaw (from `https://github.com/exyte/Macaw.git`, commit `10996a4`)
+  - Macaw (from `https://github.com/exyte/Macaw.git`, branch `master`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -12,18 +12,18 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Macaw:
-    :commit: 10996a4
+    :branch: master
     :git: https://github.com/exyte/Macaw.git
 
 CHECKOUT OPTIONS:
   Macaw:
-    :commit: 10996a4
+    :commit: 364dd14b10dbf3ab6c34daf2458966206a1ae6e1
     :git: https://github.com/exyte/Macaw.git
 
 SPEC CHECKSUMS:
-  Macaw: ffe132d93ce03ab1596a6ce211243249177a5c42
+  Macaw: ea67404875b29038afb51dc408aa678e7ec5096c
   SWXMLHash: f4522438189f72b41e39676d19469a8969d60dd1
 
-PODFILE CHECKSUM: 5431ad9415198bebbc656deb5f8c107f177f6a15
+PODFILE CHECKSUM: 4a5e0a2aac88018696d548ad3b78b4645c8b95c1
 
 COCOAPODS: 1.5.3

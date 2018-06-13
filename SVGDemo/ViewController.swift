@@ -20,7 +20,7 @@ class ViewController: UIViewController {
         
         let svgFrame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.width)
         
-        mySVGView = MySVGView.init(template: "basic_1-0-3", frame: svgFrame)
+        mySVGView = MySVGView.init(template: "zen", frame: svgFrame)
         mySVGView.contentMode = .scaleAspectFit
 
         view.addSubview(mySVGView)

@@ -68,7 +68,8 @@ extension MySVGView {
         }else if let shape = node as? Shape {
             shape.onTap { [weak self] (tapEvent) in
                 guard let strongSelf = self else { return }
-                strongSelf.replaceColors(node: shape)
+//                strongSelf.replaceColors(node: shape)
+                strongSelf.node.place = strongSelf.node.place.move(dx: 100, dy: 0)
                 print("tap(node: \(node.tag))")
             }
             shape.onLongTap { [weak self] (longPressEvent) in
