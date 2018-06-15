@@ -121,6 +121,9 @@ extension Fill: Equatable {
         if let lLinearGradient = lhs as? LinearGradient, let rLinearGradient = rhs as? LinearGradient {
             return (lLinearGradient.x1 == rLinearGradient.x1 && lLinearGradient.x2 == rLinearGradient.x2 && lLinearGradient.y1 == rLinearGradient.y1 && lLinearGradient.y2 == rLinearGradient.y2 && lLinearGradient.userSpace == rLinearGradient.userSpace && lLinearGradient.stops.count == rLinearGradient.stops.count)
         }
+        if let lRadialGradient = lhs as? RadialGradient, let rRadialGradient = rhs as? RadialGradient {
+            return (lRadialGradient.cx == rRadialGradient.cx && lRadialGradient.cy == rRadialGradient.cy && lRadialGradient.fx == rRadialGradient.fx && lRadialGradient.fy == rRadialGradient.fy && lRadialGradient.r == rRadialGradient.r && lRadialGradient.userSpace == rRadialGradient.userSpace && lRadialGradient.stops.count == rRadialGradient.stops.count)
+        }
         return false
     }
     
@@ -132,6 +135,9 @@ extension Fill: Equatable {
         }
         if let lLinearGradient = lhs as? LinearGradient, let rLinearGradient = rhs as? LinearGradient {
             return !(lLinearGradient.x1 == rLinearGradient.x1 && lLinearGradient.x2 == rLinearGradient.x2 && lLinearGradient.y1 == rLinearGradient.y1 && lLinearGradient.y2 == rLinearGradient.y2 && lLinearGradient.userSpace == rLinearGradient.userSpace && lLinearGradient.stops.count == rLinearGradient.stops.count)
+        }
+        if let lRadialGradient = lhs as? RadialGradient, let rRadialGradient = rhs as? RadialGradient {
+            return !(lRadialGradient.cx == rRadialGradient.cx && lRadialGradient.cy == rRadialGradient.cy && lRadialGradient.fx == rRadialGradient.fx && lRadialGradient.fy == rRadialGradient.fy && lRadialGradient.r == rRadialGradient.r && lRadialGradient.userSpace == rRadialGradient.userSpace && lRadialGradient.stops.count == rRadialGradient.stops.count)
         }
         return true
     }
