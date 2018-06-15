@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Macaw
 
 class ViewController: UIViewController {
     
@@ -19,6 +20,7 @@ class ViewController: UIViewController {
         let svgFrame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height)
         svgScrollView = SVGScrollView.init(template: "zen", frame: svgFrame)
         svgScrollView.penMode = 1
+        svgScrollView.penColor = Color.red
         view.addSubview(svgScrollView)
     }
     

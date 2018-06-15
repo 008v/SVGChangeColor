@@ -11,7 +11,11 @@ import Macaw
 
 public class SVGScrollView: UIScrollView {
     public var template: String = ""
-    public var penColor: Fill = Color.white
+    public var penColor: Fill = Color.white {
+        didSet {
+            svgView.penColor = penColor
+        }
+    }
     public var penMode: Int = 0 {
         didSet {
             if penMode == 0 {
@@ -96,7 +100,10 @@ extension SVGScrollView {
             if gesture.numberOfTouches == 1 && penMode == 1 {
                 let location = gesture.location(in: svgView)
                 if let currentNode = svgView.findNodeAt(location: location), currentNode.tag != ["background"] {
-                    svgView.replaceColors(node: currentNode)
+                    if let shape = currentNode as? Shape, let shapeFill = shape.fill, shapeFill == penColor {
+                        return // 涂过当前画笔颜色的区域不操作
+                    }
+                    svgView.replaceColors(node: currentNode, color: penColor)
                 }
             }
         }

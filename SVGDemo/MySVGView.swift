@@ -51,9 +51,9 @@ public class MySVGView: MacawView {
 
 // MARK: Business
 extension MySVGView {
-    public func replaceColors(node: Node) -> Bool {
+    public func replaceColors(node: Node, color: Fill?) -> Bool {
         if let shape = node as? Shape {
-            shape.fill = MySVGView.randomFill()
+            shape.fill = color
             return true
         }
         return false
@@ -158,7 +158,11 @@ extension MySVGView {
         }else if let shape = node as? Shape {
             shape.onTap { [weak self] (tapEvent) in
                 guard let strongSelf = self else { return }
-                strongSelf.replaceColors(node: shape)
+                if let shapeFill = shape.fill, shapeFill == strongSelf.penColor {
+                    strongSelf.replaceColors(node: shape, color: Color.white)
+                }else {
+                    strongSelf.replaceColors(node: shape, color: strongSelf.penColor)
+                }
                 print("tap(node: \(node.tag))")
             }
             shape.onLongTap { [weak self] (longPressEvent) in
