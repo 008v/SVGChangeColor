@@ -10,7 +10,6 @@ import UIKit
 import Macaw
 
 public class SVGScrollView: UIScrollView {
-
     public var template: String = ""
     public var penColor: Fill = Color.white
     public var penMode: Int = 0 {
@@ -31,12 +30,9 @@ public class SVGScrollView: UIScrollView {
     let minScale: CGFloat = 1.0         // 最小缩放比
     let maxWidth: CGFloat = 3000.0      // 图像渲染的实际最大宽度
     
-    deinit {
-        removeObserver(self, forKeyPath: "penMode", context: nil)
-    }
-    
     public init(template: String, frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = UIColor.white
         svgView = MySVGView.init(template: template, frame: CGRect.init(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height))
         addSubview(svgView)
         contentSize = svgView.bounds.size
@@ -96,7 +92,6 @@ extension SVGScrollView: UIGestureRecognizerDelegate {
 
 extension SVGScrollView {
     @objc func handlePan(gesture: UIPanGestureRecognizer) {
-        print("pan")
         if gesture.state == UIGestureRecognizerState.changed {
             if gesture.numberOfTouches == 1 && penMode == 1 {
                 let location = gesture.location(in: svgView)
@@ -105,5 +100,32 @@ extension SVGScrollView {
                 }
             }
         }
+    }
+}
+
+// MARK:
+extension Fill: Equatable {
+    public static func == (lhs: Fill, rhs: Fill) -> Bool {
+        if let lColor = lhs as? Color, let rColor = rhs as? Color {
+            if lColor == rColor {
+                return true
+            }
+        }
+        if let lLinearGradient = lhs as? LinearGradient, let rLinearGradient = rhs as? LinearGradient {
+            return (lLinearGradient.x1 == rLinearGradient.x1 && lLinearGradient.x2 == rLinearGradient.x2 && lLinearGradient.y1 == rLinearGradient.y1 && lLinearGradient.y2 == rLinearGradient.y2 && lLinearGradient.userSpace == rLinearGradient.userSpace && lLinearGradient.stops.count == rLinearGradient.stops.count)
+        }
+        return false
+    }
+    
+    public static func != (lhs: Fill, rhs: Fill) -> Bool {
+        if let lColor = lhs as? Color, let rColor = rhs as? Color {
+            if lColor == rColor {
+                return false
+            }
+        }
+        if let lLinearGradient = lhs as? LinearGradient, let rLinearGradient = rhs as? LinearGradient {
+            return !(lLinearGradient.x1 == rLinearGradient.x1 && lLinearGradient.x2 == rLinearGradient.x2 && lLinearGradient.y1 == rLinearGradient.y1 && lLinearGradient.y2 == rLinearGradient.y2 && lLinearGradient.userSpace == rLinearGradient.userSpace && lLinearGradient.stops.count == rLinearGradient.stops.count)
+        }
+        return true
     }
 }
