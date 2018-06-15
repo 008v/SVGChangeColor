@@ -11,44 +11,17 @@ import Macaw
 
 public class MySVGView: MacawView {
     
-    public var template: String = ""
     public var penColor: Fill = Color.white
-    public var penMode: Int = 0 {                       // 0: tap涂色 1: move涂色
-        didSet {
-            if penMode == 0 {
-                panGesture.minimumNumberOfTouches = 2
-            }else if penMode == 1 {
-                panGesture.maximumNumberOfTouches = 1
-            }
-        }
-    }
-    
-    var pinchGesture: UIPinchGestureRecognizer!
-    var panGesture: UIPanGestureRecognizer!
-    var originalTrans: Transform!           // svg原始大小的transform
-    var trans: Transform!                   // 当前的transform
-    var scaleFit: Double! {                 // scaleAspectFit后的大小，相对于SVG原始大小的比例
-        get {
-            return Double(self.bounds.width / 850)
-        }
-    }
     
     public init(template: String, frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.yellow
-        self.template = template
+        backgroundColor = UIColor.clear
         if let node = try? SVGParser.parse(path: template) {
-            // add gesture
-            pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(handlePinch(gesture:)))
-            panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(handlePan(gesture:)))
-            panGesture.maximumNumberOfTouches = 2
-            self.addGestureRecognizer(pinchGesture)
-            self.addGestureRecognizer(panGesture)
             addTap(node: node)
             // add black background
             if let group = node as? Group {
                 let rect = Rect.init(x: 1, y: 1, w: 850-2, h: 850-2)
-                let backgroundShape = Shape(form: rect, fill: Color.black)
+                let backgroundShape = Shape(form: rect, fill: Color.black, tag: ["background"])
                 var contents = group.contents
                 contents.insert(backgroundShape, at: 0)
                 group.contents = contents
@@ -59,7 +32,6 @@ public class MySVGView: MacawView {
             // layout
             self.contentMode = .scaleAspectFit
         }
-        originalTrans = Transform.init(m11: node.place.m11, m12: node.place.m12, m21: node.place.m21, m22: node.place.m22, dx: node.place.dx, dy: node.place.dy)
     }
     
     public init(node: Node = Group(), frame: CGRect) {
@@ -81,7 +53,7 @@ public class MySVGView: MacawView {
 extension MySVGView {
     public func replaceColors(node: Node) -> Bool {
         if let shape = node as? Shape {
-            shape.fill = penColor
+            shape.fill = MySVGView.randomFill()
             return true
         }
         return false
@@ -178,50 +150,6 @@ extension MySVGView {
 
 // MARK: Gesture
 extension MySVGView {
-    @objc func handlePinch(gesture: UIPinchGestureRecognizer) {
-//        print("pinch")
-        guard gesture.numberOfTouches == 2 else { return }
-        if gesture.state == UIGestureRecognizerState.changed {
-            let touch0 = gesture.location(ofTouch: 0, in: self)
-            let touch1 = gesture.location(ofTouch: 1, in: self)
-            let anchor = CGPoint.init(x: (touch0.x + touch1.x) / 2 , y: (touch0.y + touch1.y) / 2)
-            let pinchScale = Double(gesture.scale)
-            if let t = trans {
-                node.place = t.move(dx: Double(anchor.x) * (1.0 - pinchScale), dy: Double(anchor.y) * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
-            }else {
-                node.place = Transform.move(dx: Double(anchor.x) * (1.0 - pinchScale), dy: Double(anchor.y) * (1.0 - pinchScale)).scale(sx: pinchScale, sy: pinchScale)
-            }
-        }else if gesture.state == UIGestureRecognizerState.ended {
-            trans = Transform.init(m11: node.place.m11, m12: node.place.m12, m21: node.place.m21, m22: node.place.m22, dx: node.place.dx, dy: node.place.dy)
-        }
-    }
-    
-    @objc func handlePan(gesture: UIPanGestureRecognizer) {
-//        print("pan")
-        if gesture.state == UIGestureRecognizerState.changed {
-            if gesture.numberOfTouches == 1 && penMode == 1 {
-                let location = gesture.location(in: self)
-                if let currentNode = findNodeAt(location: location) {
-                    replaceColors(node: currentNode)
-                }
-                return
-            }
-            let translation = gesture.translation(in: gesture.view)
-            var scaleToOriginalSVG: Double = Double(bounds.size.width / 850)
-            if let t = trans, let ot = originalTrans {
-                scaleToOriginalSVG = t.m11 / ot.m11
-            }
-            print(scaleToOriginalSVG)
-            node.place = node.place.move(dx: Double(translation.x / CGFloat(scaleToOriginalSVG) / CGFloat(scaleFit)), dy: Double(translation.y / CGFloat(scaleToOriginalSVG) / CGFloat(scaleFit)))
-            gesture.setTranslation(CGPoint.zero, in: gesture.view)
-            trans = Transform.init(m11: node.place.m11, m12: node.place.m12, m21: node.place.m21, m22: node.place.m22, dx: node.place.dx, dy: node.place.dy)
-        }else if gesture.state == UIGestureRecognizerState.ended {
-            if gesture.numberOfTouches == 1 && penMode == 1 {
-                return
-            }
-        }
-    }
-    
     public func addTap(node: Node) {
         if let group = node as? Group {
             for child in group.contents {

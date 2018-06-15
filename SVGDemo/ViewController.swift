@@ -7,20 +7,19 @@
 //
 
 import UIKit
-import Macaw
-
 
 class ViewController: UIViewController {
     
-    var mySVGView: MySVGView!
+    var svgScrollView: SVGScrollView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.yellow
         
-        let svgFrame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.width)
-        mySVGView = MySVGView.init(template: "zen", frame: svgFrame)
-        view.addSubview(mySVGView)
+        let svgFrame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height)
+        svgScrollView = SVGScrollView.init(template: "zen", frame: svgFrame)
+        svgScrollView.penMode = 1
+        view.addSubview(svgScrollView)
     }
     
 

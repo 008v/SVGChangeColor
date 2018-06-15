@@ -15,6 +15,7 @@
 		2450350520C54C09005B3400 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2450350320C54C09005B3400 /* LaunchScreen.storyboard */; };
 		2450351020C54C09005B3400 /* SVGDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2450350F20C54C09005B3400 /* SVGDemoTests.swift */; };
 		2450351B20C54C09005B3400 /* SVGDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2450351A20C54C09005B3400 /* SVGDemoUITests.swift */; };
+		24DECD0420D24FAC00E0C88E /* SVGScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DECD0320D24FAC00E0C88E /* SVGScrollView.swift */; };
 		24F85A7920C7831800AA8D69 /* zen.svg in Resources */ = {isa = PBXBuildFile; fileRef = 24F85A7820C7831800AA8D69 /* zen.svg */; };
 		24F85A7D20C7904D00AA8D69 /* MySVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24F85A7C20C7904D00AA8D69 /* MySVGView.swift */; };
 		97A4D021CA967D0F8CBCF739 /* Pods_SVGDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F793E32AAC1A0E895E61329E /* Pods_SVGDemo.framework */; };
@@ -52,6 +53,7 @@
 		2450351620C54C09005B3400 /* SVGDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SVGDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2450351A20C54C09005B3400 /* SVGDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGDemoUITests.swift; sourceTree = "<group>"; };
 		2450351C20C54C09005B3400 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		24DECD0320D24FAC00E0C88E /* SVGScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGScrollView.swift; sourceTree = "<group>"; };
 		24F85A7820C7831800AA8D69 /* zen.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = zen.svg; sourceTree = "<group>"; };
 		24F85A7C20C7904D00AA8D69 /* MySVGView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySVGView.swift; sourceTree = "<group>"; };
 		58B75E33E52EE44ECBB61B42 /* Pods-SVGDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SVGDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SVGDemo/Pods-SVGDemo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				245034FA20C54C08005B3400 /* AppDelegate.swift */,
 				245034FC20C54C08005B3400 /* ViewController.swift */,
 				24F85A7C20C7904D00AA8D69 /* MySVGView.swift */,
+				24DECD0320D24FAC00E0C88E /* SVGScrollView.swift */,
 				245034FE20C54C08005B3400 /* Main.storyboard */,
 				2450350120C54C09005B3400 /* Assets.xcassets */,
 				2450350320C54C09005B3400 /* LaunchScreen.storyboard */,
@@ -334,6 +337,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24DECD0420D24FAC00E0C88E /* SVGScrollView.swift in Sources */,
 				245034FD20C54C08005B3400 /* ViewController.swift in Sources */,
 				245034FB20C54C08005B3400 /* AppDelegate.swift in Sources */,
 				24F85A7D20C7904D00AA8D69 /* MySVGView.swift in Sources */,
