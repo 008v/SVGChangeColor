@@ -18,9 +18,22 @@ class ViewController: UIViewController {
         view.backgroundColor = UIColor.yellow
         
         let svgFrame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height)
-        svgScrollView = SVGScrollView.init(template: "zen", frame: svgFrame)
+        svgScrollView = SVGScrollView.init(template: "classical_1-0-3", frame: svgFrame)
         svgScrollView.penMode = 1
-        svgScrollView.penColor = Color.red
+        let dicSetPenColor = ["action":
+                            ["type": "pen_color",
+                             "params": ["colortype": 1,
+                                        "colors": ["f0db09", "f66a69"],
+                                        "grad": ["x": 0, "y": 0, "z": -1]]
+                            ]
+                  ]
+        let dicSetPenMode = ["action":
+                                ["type": "pen_mode",
+                                 "params": ["mode": "single"]
+                                ]
+                            ]
+        svgScrollView.sendMessage(dic: dicSetPenColor)
+        svgScrollView.sendMessage(dic: dicSetPenMode)
         view.addSubview(svgScrollView)
     }
     
